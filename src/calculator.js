@@ -6,6 +6,9 @@
 // - subtraction (sub, -)
 // - multiplication (mul, *)
 // - division (div, /)
+// - modulo (mod, %)
+// - exponentiation (pow, ^)
+// - square root (sqrt)
 
 // Exported pure functions for testing and reuse
 function add(a, b) {
@@ -27,46 +30,82 @@ function div(a, b) {
   return a / b;
 }
 
-module.exports = { add, sub, mul, div };
+function mod(a, b) {
+  if (b === 0) {
+    throw new Error('Modulo by zero');
+  }
+  return a % b;
+}
+
+function power(base, exponent) {
+  return Math.pow(base, exponent);
+}
+
+function squareRoot(n) {
+  if (n < 0) {
+    throw new Error('Square root of negative number');
+  }
+  return Math.sqrt(n);
+}
+
+module.exports = { add, sub, mul, div, mod, power, squareRoot };
 
 // CLI wrapper
 if (require.main === module) {
   const [,, op, ...args] = process.argv;
 
-  const usage = `Usage: node src/calculator.js <operation> <num1> <num2>\n\nOperations:\n  add | +      Addition\n  sub | -      Subtraction\n  mul | *      Multiplication\n  div | /      Division\n\nExamples:\n  node src/calculator.js add 2 3\n  node src/calculator.js / 10 2`;
+  const usage = `Usage: node src/calculator.js <operation> <num1> <num2?>\n\nOperations:\n  add | +        Addition\n  sub | -        Subtraction\n  mul | *        Multiplication\n  div | /        Division\n  mod | %        Modulo (remainder)\n  pow | ^        Exponentiation (base exponent)\n  sqrt           Square root (single argument)\n\nExamples:\n  node src/calculator.js add 2 3\n  node src/calculator.js mod 10 3\n  node src/calculator.js pow 2 8\n  node src/calculator.js sqrt 16`;
 
-  if (!op || args.length < 2) {
+  if (!op || args.length < 1) {
     console.error(usage);
     process.exit(1);
   }
 
-  const a = Number(args[0]);
-  const b = Number(args[1]);
-
-  if (Number.isNaN(a) || Number.isNaN(b)) {
+  // parse numbers
+  const numArgs = args.map(Number);
+  if (numArgs.some(Number.isNaN)) {
     console.error('Invalid number input.');
     console.error(usage);
     process.exit(2);
   }
 
-  let result;
   try {
+    let result;
     switch (op) {
       case 'add':
       case '+':
-        result = add(a, b);
+        if (numArgs.length < 2) throw new Error('Two operands required');
+        result = add(numArgs[0], numArgs[1]);
         break;
       case 'sub':
       case '-':
-        result = sub(a, b);
+        if (numArgs.length < 2) throw new Error('Two operands required');
+        result = sub(numArgs[0], numArgs[1]);
         break;
       case 'mul':
       case '*':
-        result = mul(a, b);
+        if (numArgs.length < 2) throw new Error('Two operands required');
+        result = mul(numArgs[0], numArgs[1]);
         break;
       case 'div':
       case '/':
-        result = div(a, b);
+        if (numArgs.length < 2) throw new Error('Two operands required');
+        result = div(numArgs[0], numArgs[1]);
+        break;
+      case 'mod':
+      case '%':
+        if (numArgs.length < 2) throw new Error('Two operands required');
+        result = mod(numArgs[0], numArgs[1]);
+        break;
+      case 'pow':
+      case '^':
+      case '**':
+        if (numArgs.length < 2) throw new Error('Two operands required');
+        result = power(numArgs[0], numArgs[1]);
+        break;
+      case 'sqrt':
+        // sqrt accepts a single argument
+        result = squareRoot(numArgs[0]);
         break;
       default:
         console.error('Unknown operation.');
