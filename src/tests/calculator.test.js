@@ -25,10 +25,15 @@ describe('Calculator basic operations', () => {
     expect(add(1.5, 2.25)).toBeCloseTo(3.75);
     expect(div(7, 2)).toBeCloseTo(3.5);
   });
+});
 
-  // New tests for requested functions
+describe('Extended operations (requested)', () => {
   test('10 mod 3 = 1', () => {
     expect(mod(10, 3)).toBe(1);
+  });
+
+  test('5 % 2 = 1 (image example)', () => {
+    expect(mod(5, 2)).toBe(1);
   });
 
   test('modulo by zero throws', () => {
@@ -37,6 +42,10 @@ describe('Calculator basic operations', () => {
 
   test('2 pow 8 = 256', () => {
     expect(power(2, 8)).toBe(256);
+  });
+
+  test('2 ^ 3 = 8 (image example)', () => {
+    expect(power(2, 3)).toBe(8);
   });
 
   test('power supports negative exponent', () => {
